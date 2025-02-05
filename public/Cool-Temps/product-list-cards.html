@@ -1,0 +1,103 @@
+<!-- orders.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/Global.css">
+    <title>Admin products</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f4f4f4;
+        margin: 0;
+    }
+    
+    .product-card {
+        width: 300px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .product-card h2 {
+        margin: 0;
+        font-size: 20px;
+        color: #333;
+    }
+
+    .product-card p {
+        font-size: 14px;
+        color: #666;
+        margin: 5px 0;
+    }
+
+    .price {
+        font-size: 18px;
+        font-weight: bold;
+        color: #27ae60;
+    }
+
+    .category {
+        font-size: 12px;
+        padding: 5px;
+        background: #3498db;
+        color: white;
+        display: inline-block;
+        border-radius: 5px;
+        margin-top: 5px;
+    }
+
+    .date {
+        font-size: 12px;
+        color: #888;
+        margin-top: 10px;
+    }
+</style>
+<body>
+
+    <h2>Products list</h2>
+    <ul id="productsList"></ul> 
+    
+    <script>
+      // Function to fetch and display products
+async function fetchProduct() {
+    const response = await fetch("http://localhost:3000/getProduct");
+    const products = await response.json();
+
+    const productsList = document.getElementById("productsList");
+    productsList.innerHTML = ""; // Clear existing products
+
+    products.forEach(product => {
+        // Create product card div
+        const card = document.createElement("div");
+        card.classList.add("product-card");
+
+        // Insert product details into the card
+        card.innerHTML = `
+            <h2>${product.productName}</h2>
+            <p class="desc">${product.productDescription}</p>
+            <p class="price">$${product.productPrice}</p>
+            <p class="category">${product.productCategory}</p>
+            <p class="date">Added on: ${new Date(product.productAddedAt).toLocaleDateString()}</p>
+        `;
+
+        // Append card to the product list container
+        productsList.appendChild(card);
+    });
+}
+
+// Fetch products when the page loads and refresh every 5 seconds
+window.onload = fetchProduct;
+setInterval(fetchProduct, 5000);
+    </script>
+</body>
+</html>

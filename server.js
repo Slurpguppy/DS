@@ -14,15 +14,15 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .catch(err => console.log(err));
 
 // User sign Data Schema
-const DriverSchema = new mongoose.Schema({
-  driverName: String,
-  driverlastName: String,
-  driverEmail: String,
-  driverNumber: String,
-  driverAddress: String,
+const DataSchema = new mongoose.Schema({
+  name: String,
+  lastName: String,
+  email: String,
+  number: String,
+  address: String,
 });
 
-const DriverModel = mongoose.model("User", DriverSchema);
+const DataModel = mongoose.model("User", DataSchema);
 
 // Product add Data Schema
 const AddProductSchema = new mongoose.Schema({
@@ -35,22 +35,22 @@ const AddProductSchema = new mongoose.Schema({
 
 const AddProductModel = mongoose.model("Product", AddProductSchema);
 
-// POST request to add a new driver
-app.post("/addDriver", async (req, res) => {
+// POST request to add a new user
+app.post("/addUser", async (req, res) => {
   try {
-    const newDriver = new DriverModel(req.body);
-    await newDriver.save();
-    res.status(201).json({ message: "Driver saved" });
+    const newUser = new DataModel(req.body);
+    await newUser.save();
+    res.status(201).json({ message: "User saved" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// GET request to fetch all drivers
-app.get("/getDrivers", async (req, res) => {
+// GET request to fetch all users
+app.get("/getUsers", async (req, res) => {
   try {
-    const drivers = await DriverModel.find(); // Fetch all drivers
-    res.status(200).json(drivers); // Return drivers as a JSON response
+    const users = await DataModel.find(); // Fetch all users
+    res.status(200).json(users); // Return users as a JSON response
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -77,4 +77,4 @@ app.get("/getProduct", async (req, res) => {
   }
 });
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+app.listen(3000, () => console.log("Server running on port 3000"));

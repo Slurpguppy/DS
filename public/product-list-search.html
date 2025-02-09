@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/Global.css">
+    <title>Admin Products</title>
+</head>
+<body>
+
+    <h2>Products List</h2>
+
+    <!-- Search Input -->
+    <input type="text" id="productSearch" placeholder="Search products..." oninput="filterProductList()" />
+
+<!-- Search Results List -->
+    <h3>Search Results</h3>
+    <ul id="searchResultsList"></ul>
+
+    <!-- Original Product List -->
+    <h3>All Products</h3>
+    <ul id="productsList"></ul>
+
+    
+    
+
+    <script>
+      let products = [];
+
+      // Function to fetch and display products
+      async function fetchProduct() {
+        const response = await fetch("http://localhost:3000/getProduct");
+        const data = await response.json();
+        products = data;  // Store the fetched products globally
+
+        displayProducts(products);  // Display all products initially
+      }
+
+      // Function to display products in the list
+      function displayProducts(productList) {
+        const productsList = document.getElementById("productsList");
+        const searchResultsList = document.getElementById("searchResultsList");
+        
+        // Clear existing lists
+        productsList.innerHTML = "";
+        searchResultsList.innerHTML = "";
+        
+        // Display all products
+        productList.forEach(product => {
+            const li = document.createElement("li");
+            li.textContent = `${product.productName} - ${product.productDescription} - ${product.productPrice} - ${product.productCategory} - ${product.productAddedAt}`;
+            
+            productsList.appendChild(li);
+        });
+      }
+
+      // Function to filter products based on search input
+      function filterProductList() {
+        const searchQuery = document.getElementById("productSearch").value.toLowerCase();
+        
+        // Filter products that match the search query
+        const filteredProducts = products.filter(product =>
+          product.productName.toLowerCase().includes(searchQuery) ||
+          product.productDescription.toLowerCase().includes(searchQuery)
+        );
+        
+        // Display the filtered products in the search results list
+        const searchResultsList = document.getElementById("searchResultsList");
+        searchResultsList.innerHTML = "";  // Clear previous results
+
+        filteredProducts.forEach(product => {
+            const li = document.createElement("li");
+            li.textContent = `${product.productName} - ${product.productDescription} - ${product.productPrice} - ${product.productCategory} - ${product.productAddedAt}`;
+            
+            searchResultsList.appendChild(li);
+        });
+      }
+
+      // Call fetchProduct when the page loads
+      window.onload = fetchProduct;
+      setInterval(fetchProduct, 5000);  // Refresh products list every 5 seconds
+    </script>
+</body>
+</html>

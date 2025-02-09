@@ -77,4 +77,25 @@ app.get("/getProduct", async (req, res) => {
   }
 });
 
+// edit product reqrest. // PUT request to update product details by productName
+app.put("/updateProduct/:productName", async (req, res) => {
+  try {
+    const updatedProduct = await AddProductModel.findOneAndUpdate(
+      { productName: req.params.productName }, // Find product by name
+      req.body, // Data to update
+      { new: true } // Ensure the updated document is returned
+    );
+    
+    if (!updatedProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.status(200).json({ message: "Product updated", product: updatedProduct });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
 app.listen(3000, () => console.log("Server running on port 3000"));

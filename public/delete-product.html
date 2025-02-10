@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Product</title>
+    <style>
+        /* Simple inline CSS */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h3 {
+            color: #333;
+        }
+        select, button {
+            padding: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Delete Product</h2>
+
+    <!-- Product Dropdown for Deleting a Product -->
+    <select id="productDropdown">
+        <option value="">Select a product to delete</option>
+    </select>
+    <button id="deleteProductBtn">Delete Product</button>
+
+    <script>
+// Function to fetch products and populate the dropdown
+async function fetchProduct() {
+    try {
+        const response = await fetch("http://localhost:3000/getProduct");
+        const products = await response.json();
+
+        const productDropdown = document.getElementById("productDropdown");
+
+        // Clear the dropdown
+        productDropdown.innerHTML = '<option value="">Select a product to delete</option>';
+
+        // Loop through the products and populate the dropdown
+        products.forEach(product => {
+            const option = document.createElement("option");
+            option.value = product._id; // Use product ID as value
+            option.textContent = product.productName;
+            productDropdown.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Error fetching products:", error);
+    }
+}
+
+// Function to delete the selected product
+async function deleteProduct() {
+    const selectedProductId = document.getElementById("productDropdown").value;
+
+    // If no product is selected, show alert
+    if (!selectedProductId) {
+        alert("Please select a product to delete.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:3000/deleteProduct/${selectedProductId}`, {
+            method: "DELETE",
+        });
+
+        if (response.ok) {
+            alert("Product deleted successfully!");
+
+            // Refresh the product dropdown after deletion
+            fetchProduct();
+        } else {
+            alert("Failed to delete product.");
+        }
+    } catch (error) {
+        console.error("Error deleting product:", error);
+    }
+}
+
+// Fetch products when the page loads
+window.onload = fetchProduct;
+
+// Add event listener to the delete button
+document.getElementById("deleteProductBtn").addEventListener("click", deleteProduct);
+
+// Refresh product list every 5 seconds
+setInterval(fetchProduct, 5000);
+    </script>
+</body>
+</html>

@@ -7,11 +7,38 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+
+
+
+
+
+
+
+
+// START MONGO CONECTTION
+
 const uri = "mongodb+srv://wlratkowski:zSTMj7D7Xm0U68Q4@wlr-del.3dvyb.mongodb.net/";
 
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("MongoDB Connected"))
   .catch(err => console.log(err));
+
+// END MONGO CONECTTION
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//START USER DATA SCHEMA
 
 // User sign Data Schema
 const DataSchema = new mongoose.Schema({
@@ -23,17 +50,6 @@ const DataSchema = new mongoose.Schema({
 });
 
 const DataModel = mongoose.model("User", DataSchema);
-
-// Product add Data Schema
-const AddProductSchema = new mongoose.Schema({
-  productName: String,
-  productDescription: String,
-  productPrice: String,
-  productCategory: String,
-  productAddedAt: { type: Date, default: Date.now },
-});
-
-const AddProductModel = mongoose.model("Product", AddProductSchema);
 
 // POST request to add a new user
 app.post("/addUser", async (req, res) => {
@@ -55,6 +71,38 @@ app.get("/getUsers", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+//END USER DATA SCHEMA
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//START PRODUCT DATA SCHEMA
+
+// Product add Data Schema
+const AddProductSchema = new mongoose.Schema({
+  productName: String,
+  productDescription: String,
+  productPrice: String,
+  productCategory: String,
+  productAddedAt: { type: Date, default: Date.now },
+});
+
+const AddProductModel = mongoose.model("Product", AddProductSchema);
+
+
 
 // POST request to add a new Product
 app.post("/addProduct", async (req, res) => {
@@ -95,6 +143,77 @@ app.put("/updateProduct/:productName", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// DELETE request to delete a product by ID
+app.delete("/deleteProduct/:name", async (req, res) => {
+  try {
+      const productName = req.params.name;
+      const result = await ProductModel.findOneAndDelete({ productName: productName });
+
+      if (!result) {
+          return res.status(404).json({ error: "Product not found" });
+      }
+
+      res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+//END PRODUCT DATA SCHEMA
+
+
+
+
+
+
+
+
+
+
+// START DRIVER DATA SCHEMA
+
+const DriverSchema = new mongoose.Schema({
+  driverName: String,
+  driverlastName: String,
+  driverEmail: String,
+  driverNumber: String,
+});
+
+const DriverModel = mongoose.model("Driver", DriverSchema);
+
+// POST request to add a new driver
+app.post("/addDriver", async (req, res) => {
+  try {
+    const newDriver = new DriverModel(req.body); // Corrected model name
+    await newDriver.save();
+    res.status(201).json({ message: "Driver saved" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET request to fetch all drivers
+app.get("/getDrivers", async (req, res) => {
+  try {
+    const drivers = await DriverModel.find(); // Corrected model name
+    res.status(200).json(drivers);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+// END DRIVER DATA SCHEMA
+
+
+
+
+
+
+
+
+
 
 
 

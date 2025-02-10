@@ -177,7 +177,7 @@ app.delete("/deleteProduct/:name", async (req, res) => {
 
 const DriverSchema = new mongoose.Schema({
   driverName: String,
-  driverlastName: String,
+  driverLastName: String,
   driverEmail: String,
   driverNumber: String,
 });

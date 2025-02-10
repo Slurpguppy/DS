@@ -11,7 +11,7 @@ async function fetchDrivers() {
 
         drivers.forEach(driver => {
             const li = document.createElement("li");
-            li.textContent = `${driver.driverName} ${driver.driverLastName} - ${driver.driverEmail} - ${driver.driverNumber}`;
+            li.textContent = `${driver.driverName} - ${driver.driverLastName} - ${driver.driverEmail} - ${driver.driverNumber}`;
             driverList.appendChild(li);
         });
 

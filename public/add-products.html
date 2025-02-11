@@ -11,9 +11,15 @@
     <form id="productForm">
         <input type="text" id="productName" placeholder="Enter Name" required>
         <input type="text" id="productDescription" placeholder="Enter Description" required>
-        <input type="number" id="productPrice" placeholder="Enter Price" required>
+        <input type="number" id="productPrice" placeholder="Enter Price" required step="0.01">
         <input type="text" id="productCategory" placeholder="Enter Category" required>
         <input type="datetime-local" id="productAddedAt" required>
+
+        <input type="text" id="productQuantity" placeholder="Enter Quantity" required>
+        <input type="text" id="productSupplier" placeholder="Enter Supplier" required>
+        <input type="text" id="productLocal" placeholder="Add local sticker thing?" required>
+
+
         <!-- Change from URL to file input for product image 
         <input type="file" id="productImage" required>-->
         <button type="submit">Add Product</button>

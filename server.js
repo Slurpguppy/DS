@@ -47,6 +47,12 @@ const DataSchema = new mongoose.Schema({
   email: String,
   number: String,
   address: String,
+  //User preferences
+  noteToDriver: String,
+  notificationPreferences: String, // 1 day before, 2 days, 3 days...
+  substitutionPreferences: String,
+  deliveryOrPickup: String,
+  newLetterSubscribe: String,
 });
 
 const DataModel = mongoose.model("User", DataSchema);
@@ -98,6 +104,9 @@ const AddProductSchema = new mongoose.Schema({
   productPrice: String,
   productCategory: String,
   productAddedAt: { type: Date, default: Date.now },
+  productQuantity: String,
+  productSupplier: String,
+  productLocal: String, //Add local logo?
 });
 
 const AddProductModel = mongoose.model("Product", AddProductSchema);
@@ -128,21 +137,30 @@ app.get("/getProduct", async (req, res) => {
 // edit product reqrest. // PUT request to update product details by productName
 app.put("/updateProduct/:productName", async (req, res) => {
   try {
+    console.log("Received PUT request to update product:");
+    console.log("Product Name:", req.params.productName);
+    console.log("Update Data:", req.body);
+
     const updatedProduct = await AddProductModel.findOneAndUpdate(
       { productName: req.params.productName }, // Find product by name
       req.body, // Data to update
-      { new: true } // Ensure the updated document is returned
+      { new: true } // Return the updated document
     );
-    
+
     if (!updatedProduct) {
+      console.log("Product not found in the database.");
       return res.status(404).json({ message: "Product not found" });
     }
 
+    console.log("Product successfully updated:", updatedProduct);
     res.status(200).json({ message: "Product updated", product: updatedProduct });
+
   } catch (err) {
+    console.error("Error updating product:", err);
     res.status(500).json({ error: err.message });
   }
 });
+
 
 // DELETE request to delete a product by ID
 app.delete("/deleteProduct/:name", async (req, res) => {

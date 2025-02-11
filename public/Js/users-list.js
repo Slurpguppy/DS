@@ -1,29 +1,46 @@
-// Fetch drivers from the backend API
-fetch('http://localhost:5000/getDrivers')  // Updated the endpoint to reflect the new one
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return response.json();  // Parse the JSON response
-  })
-  .then(drivers => {
-    console.log(drivers);  // Log the drivers to the console to check the data
-    const driverList = document.getElementById('user-list');  // Changed to 'driver-list' if necessary
-    driverList.innerHTML = '';  // Clear the list before inserting new drivers
+// Function to fetch and display users with a counter
+async function fetchUsers() {
+  try {
+      const response = await fetch("http://localhost:3000/getUsers");
+      const users = await response.json();
 
-    // Loop through each driver and create a list item for them
-    drivers.forEach(driver => {
-      const listItem = document.createElement('li');
-      listItem.innerHTML = `
-        <strong>${driver.name} ${driver.lastName}</strong> <br>
-        <em>${driver.email}</em> <br>
-        <em>Created at: ${new Date(driver.createdAt).toLocaleDateString()}</em> <br>
-        <img src="${driver.picture}" alt="${driver.name}" width="50" />  <!-- Assuming picture field is added -->
-        <br><br>
+      const usersList = document.getElementById("user-list");
+      const userCounter = document.getElementById("userCounter");
+
+      usersList.innerHTML = ""; // Clear existing list
+
+      users.forEach(user => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+          <strong>${user.name} ${user.lastName}</strong><br>
+          <b>Email:</b> ${user.email}<br>
+          <b>Address:</b> ${user.address}<br>
+          <b>Phone:</b> ${user.number}<br>
+          <b>Note to Driver:</b> ${user.noteToDriver}<br>
+          <b>Notification Preferences:</b> ${user.notificationPreferences}<br>
+          <b>Substitution Preferences:</b> ${user.substitutionPreferences}<br>
+          <b>Delivery/Pickup:</b> ${user.deliveryOrPickup}<br>
+          <b>Newsletter Subscription:</b> ${user.newLetterSubscribe}<br>
+          <hr><br>
       `;
-      driverList.appendChild(listItem);  // Add the list item to the <ul>
-    });
-  })
-  .catch(error => {
-    console.error('Error fetching drivers:', error);
-  });
+          usersList.appendChild(li);
+      });
+
+      // Update the user counter
+      userCounter.textContent = `Total Users: ${users.length}`;
+  } catch (error) {
+      console.error("Error fetching users:", error);
+  }
+}
+
+// Call fetchUsers when the page loads
+window.onload = fetchUsers;
+setInterval(fetchUsers, 5000);
+
+
+
+
+
+
+//default
+          //li.textContent = `${user.name} ${user.lastName} - ${user.email} - ${user.address} - ${user.number} - ${user.noteToDriver} - ${user.notificationPreferences} - ${user.substitutionPreferences} - ${user.deliveryOrPickup} - ${user.newLetterSubscribe}`;

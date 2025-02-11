@@ -7,10 +7,15 @@
     const productPrice = document.getElementById("productPrice").value;
     const productCategory = document.getElementById("productCategory").value;
     const productAddedAt = document.getElementById("productAddedAt").value;
+
+    const productQuantity = document.getElementById("productQuantity").value;
+    const productSupplier = document.getElementById("productSupplier").value;
+    const productLocal = document.getElementById("productLocal").value;
+
     const response = await fetch("http://localhost:3000/addProduct", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productName, productDescription, productPrice, productCategory, productAddedAt }),
+        body: JSON.stringify({ productName, productDescription, productPrice, productCategory, productAddedAt, productQuantity, productSupplier, productLocal }),
     });
 
     const result = await response.json();

@@ -6,122 +6,176 @@
   <title>Update Product</title>
   <link rel="stylesheet" href="css/Global.css">
   <style>
-    
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: black;
+    }
+    .container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 700px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .column {
+      flex: 1;
+      min-width: 300px;
+    }
+    h2 {
+      color: black;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background: #28a745;
+      color: #fff;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    button:hover {
+      background: #218838;
+    }
+    .message {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #d9534f;
+    }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h2>Update Product</h2>
-    
-    <label for="productSearch">Search Product:</label>
-    <input type="text" id="productSearch" placeholder="Search product..." oninput="filterProducts()" />
-
-    <div class="dropdown-container">
-      <select id="productDropdown" class="dropdown" onchange="selectProduct()">
+    <!-- Current Product Info -->
+    <div class="column">
+      <h2>Current Product</h2>
+      <label for="productSearch">Search Product:</label>
+      <input type="text" id="productSearch" placeholder="Search product..." oninput="filterProducts()" />
+      <select id="productDropdown" onchange="selectProduct()">
         <option value="">Select a product</option>
       </select>
-      <div id="dropdownItems" class="dropdown-items"></div>
+      <h3 id="currentProductName"></h3>
+      <p><strong>Price:</strong> <span id="currentProductPrice"></span></p>
+      <p><strong>Description:</strong> <span id="currentProductDescription"></span></p>
+      <p><strong>Category:</strong> <span id="currentProductCategory"></span></p>
+      <p><strong>Quantity:</strong> <span id="currentProductQuantity"></span></p>
+      <p><strong>Supplier:</strong> <span id="currentProductSupplier"></span></p>
+      <p><strong>Local:</strong> <span id="currentProductLocal"></span></p>
     </div>
+    
+    <!-- Update Product Info -->
+    <div class="column">
+      <h2>Update Product</h2>
+      <label for="productName">Product Name:</label>
+      <input type="text" id="productName" required>
+      
+      <label for="productPrice">Product Price:</label>
+      <input type="text" id="productPrice" required>
+      
+      <label for="productDescription">Product Description:</label>
+      <input type="text" id="productDescription" required>
+      
+      <label for="productCategory">Product Category:</label>
+      <input type="text" id="productCategory" required>
+      
+      <label for="productQuantity">Product Quantity:</label>
+      <input type="text" id="productQuantity" required>
+      
+      <label for="productSupplier">Product Supplier:</label>
+      <input type="text" id="productSupplier" required>
+      
+      <label for="productLocal">Product Local:</label>
+      <input type="text" id="productLocal" required>
 
-    <label for="productPrice">Product Price:</label>
-    <input type="text" id="productPrice" placeholder="Enter new price" required>
-
-    <label for="productDescription">Product Description:</label>
-    <input type="text" id="productDescription" placeholder="Enter new description" required>
-
-    <button id="updateProductBtn">Update Product</button>
-
-    <div class="message" id="message"></div>
+      <button id="updateProductBtn">Update Product</button>
+      <div class="message" id="message"></div>
+    </div>
   </div>
 
   <script>
-    let allProducts = []; // Store all products
+    let allProducts = [];
 
-    // Function to fetch and display all products
     async function fetchProduct() {
       const response = await fetch("http://localhost:3000/getProduct");
-      allProducts = await response.json(); // Save products to the allProducts array
-
-      populateDropdown(allProducts); // Populate the dropdown with all products initially
+      allProducts = await response.json();
+      populateDropdown(allProducts);
     }
 
-    // Function to populate the dropdown with product names
     function populateDropdown(products) {
       const productDropdown = document.getElementById("productDropdown");
-      const dropdownItems = document.getElementById("dropdownItems");
-
-      productDropdown.innerHTML = ''; // Clear existing dropdown items
-      dropdownItems.innerHTML = ''; // Clear additional dropdown items
-
+      productDropdown.innerHTML = '<option value="">Select a product</option>';
       products.forEach(product => {
         const option = document.createElement("option");
         option.value = product.productName;
-        option.textContent = `${product.productName} - ${product.productDescription}`;
+        option.textContent = product.productName;
         productDropdown.appendChild(option);
-
-        const div = document.createElement("div");
-        div.textContent = `${product.productName} - ${product.productDescription}`;
-        div.onclick = function () {
-          selectProductFromDropdown(product.productName);
-        };
-        dropdownItems.appendChild(div);
-      });
-
-      // Show the dropdown list when there's input or focus
-      document.getElementById("productSearch").addEventListener("focus", () => {
-        dropdownItems.style.display = 'block';
-      });
-
-      document.addEventListener('click', function(event) {
-        if (!event.target.closest('.dropdown-container')) {
-          dropdownItems.style.display = 'none';
-        }
       });
     }
 
-    // Function to filter products based on search input
-    function filterProducts() {
-      const searchQuery = document.getElementById("productSearch").value.toLowerCase();
-      const filteredProducts = allProducts.filter(product => 
-        product.productName.toLowerCase().includes(searchQuery) ||
-        product.productDescription.toLowerCase().includes(searchQuery)
-      );
-      populateDropdown(filteredProducts);
-    }
-
-    // Function to handle product selection from dropdown
-    function selectProductFromDropdown(productName) {
-      document.getElementById("productSearch").value = productName; // Set search input to the selected product
+    function selectProduct() {
+      const productName = document.getElementById("productDropdown").value;
       const selectedProduct = allProducts.find(product => product.productName === productName);
       if (selectedProduct) {
+        //Current
+        document.getElementById("currentProductName").innerText = selectedProduct.productName;
+        document.getElementById("currentProductPrice").innerText = selectedProduct.productPrice;
+        document.getElementById("currentProductDescription").innerText = selectedProduct.productDescription;
+        document.getElementById("currentProductCategory").innerText = selectedProduct.productCategory;
+        document.getElementById("currentProductQuantity").innerText = selectedProduct.productQuantity;
+        document.getElementById("currentProductSupplier").innerText = selectedProduct.productSupplier;
+        document.getElementById("currentProductLocal").innerText = selectedProduct.productLocal;
+        //New
+        document.getElementById("productName").value = selectedProduct.productName;
         document.getElementById("productPrice").value = selectedProduct.productPrice;
         document.getElementById("productDescription").value = selectedProduct.productDescription;
+        document.getElementById("productCategory").value = selectedProduct.productCategory;
+        document.getElementById("productQuantity").value = selectedProduct.productQuantity;
+        document.getElementById("productSupplier").value = selectedProduct.productSupplier;
+        document.getElementById("productLocal").value = selectedProduct.productLocal;
       }
-      document.getElementById("dropdownItems").style.display = 'none'; // Hide dropdown after selection
     }
 
-    // Function to handle the product update
     document.getElementById('updateProductBtn').addEventListener('click', async function() {
-      const productName = document.getElementById('productSearch').value;
-      const productPrice = document.getElementById('productPrice').value;
-      const productDescription = document.getElementById('productDescription').value;
+      const oldProductName = document.getElementById('productDropdown').value;
 
-      // Check if the fields are filled and product is selected
-      if (!productName || !productPrice || !productDescription) {
-        document.getElementById('message').innerText = 'Please fill in all fields and select a product.';
+      const updatedProduct = {
+        productName: document.getElementById("productName").value,
+        productPrice: document.getElementById("productPrice").value,
+        productDescription: document.getElementById("productDescription").value,
+        productCategory: document.getElementById("productCategory").value,
+        productQuantity: document.getElementById("productQuantity").value,
+        productSupplier: document.getElementById("productSupplier").value,
+        productLocal: document.getElementById("productLocal").value
+      };
+
+      if (!oldProductName) {
+        document.getElementById('message').innerText = 'Please select a product to update.';
         return;
       }
 
-      // Prepare the data to update
-      const updatedProduct = {
-        productPrice,
-        productDescription
-      };
-
       try {
-        // Send PUT request to update product
-        const response = await fetch(`http://localhost:3000/updateProduct/${productName}`, {
+        const response = await fetch(`http://localhost:3000/updateProduct/${oldProductName}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -132,6 +186,7 @@
         const result = await response.json();
         if (response.ok) {
           document.getElementById('message').innerText = 'Product updated successfully!';
+          fetchProduct();
         } else {
           document.getElementById('message').innerText = result.message || 'Error updating product.';
         }
@@ -140,10 +195,7 @@
       }
     });
 
-    // Call fetchProduct when the page loads
     window.onload = fetchProduct;
-    setInterval(fetchProduct, 5000);
   </script>
-
 </body>
 </html>

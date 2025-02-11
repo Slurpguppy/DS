@@ -11,7 +11,7 @@ async function fetchProduct() {
 
         products.forEach(product => {
             const li = document.createElement("li");
-            li.textContent = `${product.productName} - ${product.productDescription} - ${product.productPrice} - ${product.productCategory} - ${product.productAddedAt}`;
+            li.textContent = `${product.productName} - ${product.productDescription} - ${product.productPrice} - ${product.productCategory} - ${product.productAddedAt} - ${product.productQuantity} - ${product.productSupplier} - ${product.productLocal}`;
             productsList.appendChild(li);
         });
 
